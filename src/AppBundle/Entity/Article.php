@@ -3,12 +3,10 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity
  * @ORM\Table()
- *
  */
 class Article
 {
@@ -16,21 +14,23 @@ class Article
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Serializer\Groups({"list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Serializer\Groups({"detail", "list"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Serializer\Groups({"detail", "list"})
      */
     private $content;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Author", cascade={"all"}, fetch="EAGER")
+     */
+    private $author;
 
     public function getId()
     {
@@ -59,5 +59,15 @@ class Article
         $this->content = $content;
 
         return $this;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(Author $author)
+    {
+        $this->author = $author;
     }
 }
