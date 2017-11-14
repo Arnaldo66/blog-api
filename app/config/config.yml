@@ -70,8 +70,10 @@ swiftmailer:
 
 sensio_framework_extra:
     view: { annotations: true }
+    request: { converters: true }
 
 fos_rest:
+    param_fether_listener: force
     body_converter:
         enabled: true
     view:
