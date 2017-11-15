@@ -50,4 +50,15 @@ class ArticleController extends FOSRestController
     {
         return $article;
     }
+
+    /**
+     * @Rest\Get("/articles", name="app_article_list")
+     * @View
+     */
+    public function listAction()
+    {
+        $articles = $this->getDoctrine()->getRepository('AppBundle:Article')->findAll();
+
+        return $articles;
+    }
 }
