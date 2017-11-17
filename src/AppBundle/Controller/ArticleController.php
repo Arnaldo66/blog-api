@@ -12,31 +12,28 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use AppBundle\Representation\Articles;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class ArticleController extends FOSRestController
 {
 
     /**
-     * @Rest\Post(
-     *    path = "/articles",
-     *    name = "app_article_create"
-     * )
+     * @Rest\Post("/articles")
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("article", converter="fos_rest.request_body")
      */
-    public function createAction(Article $article)
+    public function createAction(Article $article, ConstraintViolationList $violations)
     {
+      if (count($violations)) {
+              return $this->view($violations, Response::HTTP_BAD_REQUEST);
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $em->persist($article);
         $em->flush();
 
-        return $this->view($article, Response::HTTP_CREATED,
-          ['Location' => $this->generateUrl(
-            'app_article_show',
-            ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL])
-          ]
-        );
+        return $article;
     }
 
     /**
