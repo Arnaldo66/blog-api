@@ -73,6 +73,10 @@ sensio_framework_extra:
     request: { converters: true }
 
 fos_rest:
+    exception:
+        enabled: true
+        codes:
+            { AppBundle\Exception\ResourceValidationException: 400 }
     param_fetcher_listener: force
     body_converter:
         enabled: true
