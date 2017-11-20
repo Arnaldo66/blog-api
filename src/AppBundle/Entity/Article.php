@@ -7,11 +7,24 @@ use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ArticleRepository")
  * @ORM\Table()
  * @ExclusionPolicy("all")
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "app_article_show",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
+ * @Hateoas\Relation(
+ *     "author",
+ *     embedded = @Hateoas\Embedded("expr(object.getAuthor())")
+ * )
  */
 class Article
 {
@@ -27,12 +40,14 @@ class Article
      * @ORM\Column(type="string", length=100)
      * @Expose
      * @Assert\NotBlank
+     * @Serializer\Since("1.0")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
      * @Expose
+     * @Serializer\Since("1.0")
      * @Assert\NotBlank
      */
     private $content;
@@ -41,6 +56,13 @@ class Article
      * @ORM\ManyToOne(targetEntity="Author", cascade={"all"}, fetch="EAGER")
      */
     private $author;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Since("2.0")
+     * @Serializer\Expose
+     */
+    private $shortDescription;
 
     public function getId()
     {
@@ -79,5 +101,15 @@ class Article
     public function setAuthor(Author $author)
     {
         $this->author = $author;
+    }
+
+    public function getShortDescription()
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription($shortDescription)
+    {
+        $this->shortDescription = $shortDescription;
     }
 }
